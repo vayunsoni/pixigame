@@ -45,7 +45,8 @@ class Bullet {
 }
 
 let spaceship: Spaceship;
-let bullet: Bullet;
+let bullets: Bullet[] = [];
+
 
 function init(){
     console.log('Initialising');
@@ -60,15 +61,15 @@ function init(){
 
     //spaceship
     spaceship = new Spaceship(app);
-    bullet = new Bullet(window.innerHeight/2, window.innerHeight - 203, app);
-    
+    bullets.push(new Bullet(window.innerHeight/2, window.innerHeight - 203, app));
 }
 
 function update(){
     console.log('Updating');
     spaceship.update();
-    bullet.update();
-
+    for (const bullet of bullets) {
+        bullet.update();
+    }
 }
 
 function main(){
