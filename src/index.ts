@@ -1,4 +1,4 @@
-import { Application, Sprite } from 'pixi.js'
+import { Application, Graphics, Sprite } from 'pixi.js'
 
 const app = new Application({
 	view: document.getElementById("pixi-canvas") as HTMLCanvasElement,
@@ -28,8 +28,24 @@ class Spaceship {
     }
 
 }
+class Bullet {
+    private bul: Graphics;
+    
+    constructor(x: number, y: number, app: Application) {
+        this.bul = new Graphics;
+        this.bul.beginFill(0xFF0000);
+        this.bul.drawCircle (x,y,10);
+        this.bul.endFill();
+        app.stage.addChild(this.bul);
+    }
+    update(){
+        this.bul.y -=1;
+    }
+
+}
 
 let spaceship: Spaceship;
+let bullet: Bullet;
 
 function init(){
     console.log('Initialising');
@@ -44,11 +60,14 @@ function init(){
 
     //spaceship
     spaceship = new Spaceship(app);
+    bullet = new Bullet(window.innerHeight/2, window.innerHeight - 203, app);
+    
 }
 
 function update(){
     console.log('Updating');
     spaceship.update();
+    bullet.update();
 
 }
 
