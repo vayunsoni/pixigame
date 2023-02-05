@@ -61,7 +61,9 @@ function init(){
 
     //spaceship
     spaceship = new Spaceship(app);
-    bullets.push(new Bullet(window.innerHeight/2, window.innerHeight - 203, app));
+    setInterval(()=>{
+        bullets.push(new Bullet(Math.random()*window.innerHeight, window.innerHeight - 203, app));
+    },500)
 }
 
 function update(){
