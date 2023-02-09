@@ -9,6 +9,34 @@ const app = new Application({
 	height: window.innerHeight
 });
 
+class KeyboardManager{
+    public isLeftPressed = false;
+    public isRightPressed= false;
+    constructor(){
+        window.onkeydown = ((keyEvent) => this.HandleKeyPress(keyEvent));
+        window.onkeyup   = ((keyEvent) => this.HandleKeyPress(keyEvent));
+    }
+    HandleKeyPress(keyEvent: KeyboardEvent){
+        if(keyEvent.key=='ArrowLeft'){
+            if(keyEvent.type=='keydown'){
+                this.isLeftPressed = true;
+            }
+            if(keyEvent.type=='keyup'){
+                this.isLeftPressed = false;
+            }
+        }
+        if(keyEvent.key=='ArrowRight'){
+            if(keyEvent.type=='keydown'){
+                this.isRightPressed = true;
+            }
+            if(keyEvent.type=='keyup'){
+                this.isRightPressed = false;
+            }
+        }
+    }
+}
+
+
 class Spaceship {
     private ss: Sprite;
     // private velocity=0;
@@ -20,9 +48,9 @@ class Spaceship {
         this.ss.y = window.innerHeight - 100;
         this.ss.scale.set(0.11);
         app.stage.addChild(this.ss)
-        
     }
     update(){
+        
         }
     }
 
@@ -53,16 +81,6 @@ class Alien{
     }
     update(){
         
-    }
-}
-class KeyboardManager{
-    // public isLeftPressed: Boolean;
-    // public isRightPressed: Boolean;
-    constructor(){
-        window.onkeydown = ((keyEvent) => this.HandleKeyPress(keyEvent));
-    }
-    HandleKeyPress(keyEvent: KeyboardEvent){
-        console.log(keyEvent);
     }
 }
 
