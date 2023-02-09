@@ -11,6 +11,7 @@ const app = new Application({
 
 class Spaceship {
     private ss: Sprite;
+    // private velocity=0;
 
     constructor(app: Application) {
         this.ss = Sprite.from("spaceship.png")
@@ -19,15 +20,12 @@ class Spaceship {
         this.ss.y = window.innerHeight - 100;
         this.ss.scale.set(0.11);
         app.stage.addChild(this.ss)
+        
     }
     update(){
-        this.ss.x +=1;
-        if(this.ss.x > window.innerHeight){
-            this.ss.x =0;
         }
     }
 
-}
 class Bullet {
     private bul: Graphics;
     
@@ -53,15 +51,25 @@ class Alien{
         this.as.y = y;
         app.stage.addChild(this.as);
     }
-
     update(){
         
     }
 }
+class KeyboardManager{
+    // public isLeftPressed: Boolean;
+    // public isRightPressed: Boolean;
+    constructor(){
+        window.onkeydown = ((keyEvent) => this.HandleKeyPress(keyEvent));
+    }
+    HandleKeyPress(keyEvent: KeyboardEvent){
+        console.log(keyEvent);
+    }
+}
 
-let spaceship: Spaceship;
-let bullets: Bullet[] = [];
+let spaceship:  Spaceship;
+let bullets:    Bullet[] = [];
 let aliens: Alien[] = [];
+let keyMgr:    KeyboardManager;
 
 function init(){
     console.log('Initialising');
@@ -85,8 +93,9 @@ function init(){
     //spaceship
     spaceship = new Spaceship(app);
     bullets.push(new Bullet(window.innerHeight/2, window.innerHeight - 203, app));
-
-    
+    //keyevent
+    keyMgr = new KeyboardManager();
+    keyMgr;
 }
 
 function update(){
