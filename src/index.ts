@@ -39,7 +39,7 @@ class KeyboardManager{
 
 class Spaceship {
     private ss: Sprite;
-    // private velocity=0;
+    private velocity=0;
 
     constructor(app: Application) {
         this.ss = Sprite.from("spaceship.png")
@@ -50,9 +50,16 @@ class Spaceship {
         app.stage.addChild(this.ss)
     }
     update(){
-        
+        this.velocity = 0;
+        if(keyMgr.isLeftPressed == true){
+            this.velocity = -3;
         }
+        if(keyMgr.isRightPressed == true){
+            this.velocity = 3;
+        } 
+        this.ss.x += this.velocity;
     }
+}
 
 class Bullet {
     private bul: Graphics;
@@ -60,7 +67,7 @@ class Bullet {
     constructor(x: number, y: number, app: Application) {
         this.bul = new Graphics;
         this.bul.beginFill(0xFF0000);
-        this.bul.drawCircle (x,y,10);
+        this.bul.drawCircle (x,y,8);
         this.bul.endFill();
         app.stage.addChild(this.bul);
     }
