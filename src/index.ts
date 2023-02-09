@@ -44,9 +44,24 @@ class Bullet {
 
 }
 
+class Alien{
+    private as: Sprite;
+    constructor(x: number, y: number,app: Application) {
+        this.as = Sprite.from("alien.png");
+        this.as.scale.set(0.2);
+        this.as.x = x;
+        this.as.y = y;
+        app.stage.addChild(this.as);
+    }
+
+    update(){
+        
+    }
+}
+
 let spaceship: Spaceship;
 let bullets: Bullet[] = [];
-
+let aliens: Alien[] = [];
 
 function init(){
     console.log('Initialising');
@@ -58,15 +73,28 @@ function init(){
     background.height = window.innerHeight;
     background.width = window.innerHeight;
     app.stage.addChild(background);
-
+    //alien
+    
+    for (let rows=0; rows<2; ++rows){
+        for(let columns = 0; columns <10; ++columns ){   
+            let y = rows*120;
+            let x = columns*100;
+            aliens.push(new Alien(x,y,app));
+        }
+    }
     //spaceship
     spaceship = new Spaceship(app);
     bullets.push(new Bullet(window.innerHeight/2, window.innerHeight - 203, app));
+
+    
 }
 
 function update(){
     console.log('Updating');
     spaceship.update();
+    for (const alien of aliens) {
+        alien.update();
+    }
     for (const bullet of bullets) {
         bullet.update();
     }
