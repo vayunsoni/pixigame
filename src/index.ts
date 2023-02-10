@@ -10,13 +10,22 @@ const app = new Application({
 });
 
 class KeyboardManager{
-    public isLeftPressed = false;
-    public isRightPressed= false;
+    public isLeftPressed  = false;
+    public isRightPressed = false;
+    public isSpacePressed = false;
     constructor(){
         window.onkeydown = ((keyEvent) => this.HandleKeyPress(keyEvent));
         window.onkeyup   = ((keyEvent) => this.HandleKeyPress(keyEvent));
     }
     HandleKeyPress(keyEvent: KeyboardEvent){
+        if(keyEvent.key ==' '){
+            if(keyEvent.type=='keydown'){
+                this.isSpacePressed = true;
+            }
+            if(keyEvent.type=='keyup'){
+                this.isSpacePressed = false;
+            }
+        }
         if(keyEvent.key=='ArrowLeft'){
             if(keyEvent.type=='keydown'){
                 this.isLeftPressed = true;
@@ -39,7 +48,8 @@ class KeyboardManager{
 
 class Spaceship {
     private ss: Sprite;
-    private velocity=0;
+    private vel=0;
+    private frames_left_until_next_reload = 30;
 
     constructor(app: Application) {
         this.ss = Sprite.from("spaceship.png")
@@ -49,15 +59,44 @@ class Spaceship {
         this.ss.scale.set(0.11);
         app.stage.addChild(this.ss)
     }
-    update(){
-        this.velocity = 0;
+    updateVelocity(){
+        this.vel = 0;
         if(keyMgr.isLeftPressed == true){
-            this.velocity = -3;
+            this.vel = -3;
         }
         if(keyMgr.isRightPressed == true){
-            this.velocity = 3;
+            this.vel = 3;
         } 
-        this.ss.x += this.velocity;
+    }
+    shoot(){ 
+        bullets.push(new Bullet(this.ss.x, this.ss.y - 80, app));
+    }
+
+    update(){
+        //update velocity
+        this.updateVelocity();
+        ///update position
+        this.ss.x += this.vel;
+        //position bounds
+        if(this.ss.x > window.innerHeight-76){
+            this.ss.x = window.innerHeight-76;
+        }
+        if(this.ss.x<= 76){
+            this.ss.x = 76;
+        }
+        //shoot
+        if(keyMgr.isSpacePressed){
+            if(this.frames_left_until_next_reload == 30){
+                this.shoot();
+                this.frames_left_until_next_reload--;
+            }
+            this.frames_left_until_next_reload--;
+            if(this.frames_left_until_next_reload==0){
+                this.frames_left_until_next_reload=30;
+            }
+
+        }
+    
     }
 }
 
@@ -72,7 +111,7 @@ class Bullet {
         app.stage.addChild(this.bul);
     }
     update(){
-        this.bul.y -=1;
+            this.bul.y -=1;
     }
 
 }
@@ -117,7 +156,6 @@ function init(){
     }
     //spaceship
     spaceship = new Spaceship(app);
-    bullets.push(new Bullet(window.innerHeight/2, window.innerHeight - 203, app));
     //keyevent
     keyMgr = new KeyboardManager();
     keyMgr;
@@ -136,7 +174,7 @@ function update(){
 
 function main(){
     init();
-    setInterval(update,1000/60);
+    setInterval(update,1000/120);
 }
 
 window.onload = main;
