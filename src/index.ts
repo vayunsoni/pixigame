@@ -102,31 +102,66 @@ class Spaceship {
 
 class Bullet {
     private bul: Graphics;
-    
+    public active_bullet: boolean;
     constructor(x: number, y: number, app: Application) {
+        this.active_bullet = true;
         this.bul = new Graphics;
+        this.bul.x=x;
+        this.bul.y=y;
         this.bul.beginFill(0xFF0000);
-        this.bul.drawCircle (x,y,8);
+        this.bul.drawCircle (0,0,8);
         this.bul.endFill();
         app.stage.addChild(this.bul);
     }
-    update(){
-            this.bul.y -=1;
+    getX(){
+        return this.bul.x;
     }
-
+    getY(){
+        return this.bul.y;
+    }
+    destroy(){
+        app.stage.removeChild(this.bul);
+        this.active_bullet = false;
+    }
+    update(){
+        this.bul.y -=2;
+    }
 }
 
 class Alien{
     private as: Sprite;
+    private health = 5;
+    public alien_active = true;
     constructor(x: number, y: number,app: Application) {
         this.as = Sprite.from("alien.png");
         this.as.scale.set(0.2);
         this.as.x = x;
         this.as.y = y;
-        app.stage.addChild(this.as);
+        app.stage.addChild(this.as);  
     }
+    destroy(){
+        app.stage.removeChild(this.as);
+        this.alien_active = false;
+    }
+    
     update(){
-        
+        if(!this.alien_active){
+            return;
+        }
+        for(let buls of bullets){
+            if(!buls.active_bullet){
+                continue;
+            }
+            if(this.as.x < buls.getX()  && buls.getX() < this.as.x + this.as.width){
+                if(this.as.y < buls.getY()  && buls.getY() < this.as.y + this.as.height){
+                    this.health--;
+                    buls.destroy();
+                }
+            }
+        }
+        if(this.health == 0){
+            this.destroy();
+        }
     }
 }
 
@@ -148,9 +183,9 @@ function init(){
     //alien
     
     for (let rows=0; rows<2; ++rows){
-        for(let columns = 0; columns <10; ++columns ){   
+        for(let columns = 0; columns <6; ++columns ){   
             let y = rows*120;
-            let x = columns*100;
+            let x = columns*112;
             aliens.push(new Alien(x,y,app));
         }
     }
