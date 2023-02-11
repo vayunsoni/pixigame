@@ -68,7 +68,7 @@ class Spaceship {
         } 
     }
     shoot(){ 
-        bullets.push(new Bullet(this.ss.x, this.ss.y - 80, app));
+        bullets.push(new Bullet(this.ss.x, this.ss.y - 80, true, app));
     }
 
     update(){
@@ -85,13 +85,13 @@ class Spaceship {
         }
         //shoot
         if(keyMgr.isSpacePressed){
-            if(this.frames_left_until_next_reload == 30){
+            if(this.frames_left_until_next_reload == 25){
                 this.shoot();
                 this.frames_left_until_next_reload--;
             }
             this.frames_left_until_next_reload--;
             if(this.frames_left_until_next_reload==0){
-                this.frames_left_until_next_reload=30;
+                this.frames_left_until_next_reload=25;
             }
 
         }
@@ -101,13 +101,22 @@ class Spaceship {
 
 class Bullet {
     private bul: Graphics;
+    private bulletColor: number;
+    public isOurBullet: boolean;
     public active_bullet: boolean;
-    constructor(x: number, y: number, app: Application) {
+    constructor(x: number, y: number, isOurBullet: boolean, app: Application) {
         this.active_bullet = true;
         this.bul = new Graphics;
+        this.isOurBullet = isOurBullet;
         this.bul.x=x;
         this.bul.y=y;
-        this.bul.beginFill(0xFF0000);
+        if(this.isOurBullet){
+            this.bulletColor = 0x00ff00;
+        }
+        else{
+            this.bulletColor = 0xff0000;
+        }
+        this.bul.beginFill(this.bulletColor);
         this.bul.drawCircle (0,0,8);
         this.bul.endFill();
         app.stage.addChild(this.bul);
@@ -123,7 +132,12 @@ class Bullet {
         this.active_bullet = false;
     }
     update(){
-        this.bul.y -=2;
+        if(this.isOurBullet){
+            this.bul.y -=2;
+        }
+        else{
+            this.bul.y +=2;
+        }
     }
 }
 
@@ -131,6 +145,7 @@ class Alien{
     private as: Sprite;
     private health = 5;
     private healthBar = new Graphics;
+    private shootProbability = 0.001;
     public alien_active = true;
     constructor(x: number, y: number,app: Application) {
         this.as = Sprite.from("alien.png");
@@ -152,7 +167,7 @@ class Alien{
         let green = 0x00FF00;
         let color = red*(maxhealth-this.health)/maxhealth + green* (this.health/maxhealth);
         this.healthBar.beginFill(color);
-        this.healthBar.drawRect(this.as.x+25,this.as.y,healthBarWidth,this.as.height/10);
+        this.healthBar.drawRect(this.as.x+25,this.as.y,healthBarWidth,this.as.height/20);
         console.log("drawwwwww");
         this.healthBar.endFill();
         app.stage.addChild(this.healthBar);
@@ -161,13 +176,21 @@ class Alien{
         app.stage.removeChild(this.as);
         this.alien_active = false;
     }
-    
+    shoot(){ 
+        bullets.push(new Bullet(this.as.x+this.as.width/2, this.as.y + this.as.height, false, app));
+    }
     update(){
         if(!this.alien_active){
             return;
         }
+        if(Math.random() < this.shootProbability){
+            this.shoot();
+        }
         for(let buls of bullets){
             if(!buls.active_bullet){
+                continue;
+            }
+            if(!buls.isOurBullet){
                 continue;
             }
             if(this.as.x < buls.getX()  && buls.getX() < this.as.x + this.as.width){
