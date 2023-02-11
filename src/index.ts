@@ -50,14 +50,13 @@ class Spaceship {
     private ss: Sprite;
     private vel=0;
     private frames_left_until_next_reload = 30;
-
     constructor(app: Application) {
         this.ss = Sprite.from("spaceship.png")
         this.ss.anchor.set(0.5);
         this.ss.x = window.innerHeight/2;
         this.ss.y = window.innerHeight - 100;
         this.ss.scale.set(0.11);
-        app.stage.addChild(this.ss)
+        app.stage.addChild(this.ss);
     }
     updateVelocity(){
         this.vel = 0;
@@ -131,13 +130,32 @@ class Bullet {
 class Alien{
     private as: Sprite;
     private health = 5;
+    private healthBar = new Graphics;
     public alien_active = true;
     constructor(x: number, y: number,app: Application) {
         this.as = Sprite.from("alien.png");
         this.as.scale.set(0.2);
         this.as.x = x;
-        this.as.y = y;
+        this.as.y = y;    
+        this.updateHealthBar();  
         app.stage.addChild(this.as);  
+    }
+    updateHealthBar(){
+        if(app.stage.children.includes(this.healthBar)){   
+            app.stage.removeChild(this.healthBar);
+        }
+        let maxwidth = this.as.width - 50;
+        let maxhealth = 5;
+        let healthBarWidth = maxwidth * this.health / maxhealth;
+        this.healthBar = new Graphics;
+        let red = 0xFF0000;
+        let green = 0x00FF00;
+        let color = red*(maxhealth-this.health)/maxhealth + green* (this.health/maxhealth);
+        this.healthBar.beginFill(color);
+        this.healthBar.drawRect(this.as.x+25,this.as.y,healthBarWidth,this.as.height/10);
+        console.log("drawwwwww");
+        this.healthBar.endFill();
+        app.stage.addChild(this.healthBar);
     }
     destroy(){
         app.stage.removeChild(this.as);
@@ -159,6 +177,7 @@ class Alien{
                 }
             }
         }
+        this.updateHealthBar();
         if(this.health == 0){
             this.destroy();
         }
